@@ -92,4 +92,18 @@ public class PersonTest
     p1.setGender("Female");
     assertEquals("Female", p1.getGender());
   }
+  
+  @Test
+  public void changingCloneShouldNotAffectOriginalEntity() {
+    
+    Person originalPerson = new Person("Canuck", "Male", new GregorianCalendar(1967, Calendar.JULY, 1).getTime());
+    long originalBirthDate = originalPerson.getBirthDate().getTime();
+    
+    Person clonedPerson = originalPerson.clone();
+    
+    Date newBirthDate = new GregorianCalendar(1967, Calendar.AUGUST, 1).getTime();
+    clonedPerson.getBirthDate().setTime(newBirthDate.getTime());
+    
+    assertEquals(originalBirthDate, originalPerson.getBirthDate().getTime());
+  }
 }

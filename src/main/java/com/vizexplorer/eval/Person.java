@@ -85,6 +85,6 @@ public class Person
 
   public Person clone()
   {
-    return new Person(name, gender, birthDate);
+    return new Person(name, gender, new Date(birthDate.getTime()));
   }
 }
