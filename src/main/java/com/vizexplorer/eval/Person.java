@@ -27,7 +27,9 @@
  */
 package com.vizexplorer.eval;
 
+import java.text.DateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -86,5 +88,10 @@ public class Person
   public Person clone()
   {
     return new Person(name, gender, birthDate);
+  }
+  
+  @Override
+  public String toString() {
+    return String.format("Name: %s; Gender: %s; Birth Date: %s", name, gender, DateFormat.getDateInstance(DateFormat.LONG, Locale.US).format(birthDate));
   }
 }

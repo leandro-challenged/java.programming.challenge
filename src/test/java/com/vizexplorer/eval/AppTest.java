@@ -24,7 +24,7 @@ public class AppTest
       String [] args = new String[]{"", "Biff", "Male", "19950110"};
       App.main(args);
 
-      assertTrue(outContent.toString().startsWith("Person instance created: com.vizexplorer.eval.Person@"));
+      assertTrue(outContent.toString().startsWith("Person instance created: Name: Biff; Gender: Male; Birth Date: January 10, 1995"));
 
       args = new String[]{"", "", "", "bad date"};
       App.main(args);
