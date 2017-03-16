@@ -94,8 +94,8 @@ public class PersonTest
   }
   
   @Test
-  public void changingCloneShouldNotAffectOriginalEntity() {
-    
+  public void changingCloneShouldNotAffectOriginalEntity() 
+  {
     Person originalPerson = new Person("Canuck", "Male", new GregorianCalendar(1967, Calendar.JULY, 1).getTime());
     long originalBirthDate = originalPerson.getBirthDate().getTime();
     
