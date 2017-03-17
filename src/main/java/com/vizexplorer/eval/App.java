@@ -27,15 +27,21 @@
  */
 package com.vizexplorer.eval;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 
@@ -70,7 +76,7 @@ public class App
 
   public String performRequest(String... args) throws ParseException 
   {
-      String operation = args[0];
+      String operation = args.length > 0 ? args[0] : "HELP";
       
       em.getTransaction().begin();
   
@@ -88,6 +94,7 @@ public class App
     operations.put("RETRIEVE", new OperationRetrieve());
     operations.put("UPDATE", new OperationUpdate());
     operations.put("DELETE", new OperationDelete());
+    operations.put("HELP", new OperationHelp());
   }
   
   private static void silentConsole() {
@@ -161,6 +168,25 @@ class OperationDelete implements Operation
     repo.delete(person);
     
     return "Person deleted: " + Formatter.format(person);
+  }
+}
+
+class OperationHelp implements Operation
+{
+  @Override
+  public String perform(EntityManager em, String... args) throws ParseException {
+    
+    InputStream in = getClass().getResourceAsStream("/help.txt"); 
+    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+
+    StringBuilder help = new StringBuilder();
+    List<Object> lines = reader.lines().collect(Collectors.toList());
+    
+    for(Object line : lines)
+    {
+      help.append(line).append(System.getProperty("line.separator"));
+    }
+    return help.toString();
   }
 }
 
