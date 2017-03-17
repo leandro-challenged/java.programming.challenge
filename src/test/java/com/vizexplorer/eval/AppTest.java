@@ -111,6 +111,21 @@ public class AppTest
     assertEquals(responseExpected, response);
   }
   
+  @Test
+  public void allowNullAttributes() throws ParseException
+  {
+    EntityManager em = initDb();
+    Person person = createBiff();
+
+    new App(em).performRequest("UPDATE", person.getId(), "null", "null", "null");
+    
+    Person updatedPerson = em.find(Person.class, person.getId());
+    
+    assertNull(updatedPerson.getName());
+    assertNull(updatedPerson.getGender());
+    assertNull(updatedPerson.getBirthDate());
+  }
+  
   @BeforeClass
   public static void configureDb()
   {

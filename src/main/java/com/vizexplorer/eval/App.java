@@ -211,8 +211,8 @@ class Parser
   {
     PersonDto result = new PersonDto();
     
-    result.name = args[0];
-    result.gender = args[1];
+    result.name = getValue(args[0]);
+    result.gender = getValue(args[1]);
     result.birthDate = getValue(args[2]) == null ? null : new SimpleDateFormat("yyyyMMdd").parse(args[2]);
     
     return result;
