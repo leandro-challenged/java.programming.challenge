@@ -13,3 +13,4 @@
 *.ear
 
 /target/
+db/
