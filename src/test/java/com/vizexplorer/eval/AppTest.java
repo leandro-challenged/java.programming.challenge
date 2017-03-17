@@ -34,7 +34,7 @@ public class AppTest
       App.main(args);
 
       assertTrue(outContent.toString().startsWith("Person created: id:"));
-
+      
       args = new String[]{"CREATE", "", "", "bad date"};
       App.main(args);
 
