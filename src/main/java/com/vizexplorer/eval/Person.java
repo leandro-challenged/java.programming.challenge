@@ -32,16 +32,26 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.UUID;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
 /**
  *
  */
+@Entity
 public class Person
 {
+  @Id
   private String id;
+  @Column
   private String name;
+  @Column
   private String gender;
+  @Column
   private Date birthDate;
 
+  public Person() {  }
   /**
    * 
    * @param name

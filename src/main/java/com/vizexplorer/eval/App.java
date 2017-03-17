@@ -27,20 +27,174 @@
  */
 package com.vizexplorer.eval;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.logging.Level;
+
+import javax.persistence.EntityManager;
 
 /**
  *
  */
 public class App 
 {
+  private EntityManager em;
+
+  public App(EntityManager em) 
+  {
+    this.em = em;
+  }
+  
   public static void main( String[] args ) throws ParseException
   {
-    Date bd = null;
-    bd = new SimpleDateFormat("yyyyMMdd").parse(args[2]);
-    Person p = new Person(args[0], args[1], bd);
-    System.out.println( "Person instance created: "+p);
+    silentConsole();
+    
+    EntityManager em = LocalEntityManagerFactory.createEntityManager();
+    try 
+    {
+      App app = new App(em);
+      String response = app.performRequest(args);
+      System.out.println(response);
+    }
+    finally
+    {
+      LocalEntityManagerFactory.close();
+    }
+  }
+
+  public String performRequest(String... args) throws ParseException 
+  {
+      String operation = args[0];
+      
+      em.getTransaction().begin();
+  
+      String result = operations.get(operation).perform(em, args);
+      
+      em.getTransaction().commit();
+  
+      return result;
+  }
+  
+  private static Map<String, Operation> operations = new HashMap<>();
+  
+  static {
+    operations.put("CREATE", new OperationCreate());
+    operations.put("RETRIEVE", new OperationRetrieve());
+    operations.put("UPDATE", new OperationUpdate());
+    operations.put("DELETE", new OperationDelete());
+  }
+  
+  private static void silentConsole() {
+    java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.SEVERE);
+  }
+}
+
+interface Operation
+{
+  String perform(EntityManager em, String... args) throws ParseException ;
+}
+
+class OperationCreate implements Operation
+{
+  @Override
+  public String perform(EntityManager em, String... args) throws ParseException 
+  {
+    PersonDto attributes = Parser.parseCommandArguments(Arrays.copyOfRange(args, 1, args.length));
+  
+    Person person = new Person(attributes.name, attributes.gender, attributes.birthDate);
+    new PersonRepo(em).create(person);
+    
+    return "Person created: " + Formatter.format(person);
+  }
+}
+
+class OperationRetrieve implements Operation
+{
+  @Override
+  public String perform(EntityManager em, String... args) throws ParseException 
+  {
+    String id = args[1];
+  
+    Person person = new PersonRepo(em).find(id);
+
+    return "Person found: " + Formatter.format(person);
+  }
+}
+
+class OperationUpdate implements Operation
+{
+  @Override
+  public String perform(EntityManager em, String... args) throws ParseException 
+  {
+    String id = args[1];
+    
+    PersonDto newAttributes = Parser.parseCommandArguments(Arrays.copyOfRange(args, 2, args.length));
+    
+    PersonRepo repo = new PersonRepo(em);
+    
+    Person person = repo.find(id);
+
+    person.setName(newAttributes.name);
+    person.setGender(newAttributes.gender);
+    person.setBirthDate(newAttributes.birthDate);
+    
+    repo.update(person);
+    
+    return "Person updated: " + Formatter.format(person);
+  }
+}
+
+class OperationDelete implements Operation
+{
+  @Override
+  public String perform(EntityManager em, String... args) throws ParseException 
+  {
+    String id = args[1];
+    PersonRepo repo = new PersonRepo(em);
+    Person person = repo.find(id);
+    repo.delete(person);
+    
+    return "Person deleted: " + Formatter.format(person);
+  }
+}
+
+class Formatter
+{
+  public static String format(Person person)
+  {
+    String formattedBirthDate = person.getBirthDate() == null ? null : DateFormat.getDateInstance(DateFormat.LONG, Locale.US).format(person.getBirthDate());
+    return String.format("id:%s, %s, %s, %s", person.getId(), person.getName(), person.getGender(), formattedBirthDate);
+  }
+}
+
+class PersonDto
+{
+  String name;
+  String gender;
+  Date birthDate;
+}
+
+class Parser
+{
+  static PersonDto parseCommandArguments(String[] args) throws ParseException
+  {
+    PersonDto result = new PersonDto();
+    
+    result.name = args[0];
+    result.gender = args[1];
+    result.birthDate = getValue(args[2]) == null ? null : new SimpleDateFormat("yyyyMMdd").parse(args[2]);
+    
+    return result;
+  }
+  
+  private static String getValue(String arg)
+  {
+    return "null".equals(arg) ? null : arg;
   }
 }
