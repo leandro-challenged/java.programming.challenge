@@ -33,7 +33,6 @@ import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -128,7 +127,7 @@ class OperationRetrieve implements Operation
   {
     String id = args[1];
   
-    Person person = new PersonRepo(em).find(id);
+    Person person = new PersonRepo(em).get(id);
 
     return "Person found: " + Formatter.format(person);
   }
@@ -145,7 +144,7 @@ class OperationUpdate implements Operation
     
     PersonRepo repo = new PersonRepo(em);
     
-    Person person = repo.find(id);
+    Person person = repo.get(id);
 
     person.setName(newAttributes.name);
     person.setGender(newAttributes.gender);
@@ -164,7 +163,7 @@ class OperationDelete implements Operation
   {
     String id = args[1];
     PersonRepo repo = new PersonRepo(em);
-    Person person = repo.find(id);
+    Person person = repo.get(id);
     repo.delete(person);
     
     return "Person deleted: " + Formatter.format(person);
