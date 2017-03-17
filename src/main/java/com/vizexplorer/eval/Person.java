@@ -51,9 +51,9 @@ public class Person
   public Person(String name, String gender, Date birthDate)
   {
     id = (UUID.randomUUID().toString());
-    setName(name);
-    setGender(gender);
-    setBirthDate(birthDate);
+    this.name = name;
+    this.gender = gender;
+    this.birthDate = birthDate;
   }
 
   public String getId()
@@ -93,5 +93,9 @@ public class Person
   @Override
   public String toString() {
     return String.format("Name: %s; Gender: %s; Birth Date: %s", name, gender, DateFormat.getDateInstance(DateFormat.LONG, Locale.US).format(birthDate));
+  }
+
+  public Person getImmutable() {
+    return new ImmutablePerson(name, gender, birthDate);
   }
 }
