@@ -31,11 +31,17 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.persistence.EntityManager;
+
 /**
  *
  */
 public class App 
 {
+  public App(EntityManager em) {
+    // TODO Auto-generated constructor stub
+  }
+
   public static void main( String[] args ) throws ParseException
   {
     Date bd = null;

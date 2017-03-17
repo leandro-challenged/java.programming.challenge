@@ -1,10 +1,13 @@
 package com.vizexplorer.eval;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.text.ParseException;
+import java.util.List;
+
+import javax.persistence.EntityManager;
 
 import org.junit.Test;
 
@@ -34,5 +37,20 @@ public class AppTest
     {
       System.setOut(null);
     }
+  }
+  
+  @Test
+  public void createPerson()
+  {
+    EntityManager em = TestEntityManagerFactory.createEntityManager();
+    App app = new App(em);
+    
+//    String response = app.performRequest("CREATE", "Biff", "Male", "19950110");
+    
+    em.clear();
+    List<Person> persons = em.createQuery("select p from Person p", Person.class).getResultList();
+    
+    assertEquals(1, persons.size());
+//    assertEquals()
   }
 }
