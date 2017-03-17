@@ -34,6 +34,6 @@ public class ImmutablePerson extends Person {
   }
   
   private void error() {
-    throw new UnsupportedOperationException();
+    throw new UnsupportedOperationException("Immutable person cannot be modified.");
   }
 }

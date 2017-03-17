@@ -1,0 +1,20 @@
+
+You are seeing a help document. It will always be shown if you execute this program without arguments.
+
+You may pass arguments to this program in order to create, retrieve, update, and delete persons.
+While creating and updating persons, please inform all person's attributes in the following order: name, gender, and birth date in yyyyMMdd format.
+
+Bellow command will return an id for the created person: 
+CREATE Bob Male 19800417
+
+Use that id to retrieve that person:
+RETRIEVE 7f508a13-3ad7-4756-86ee-c2408d63b145
+
+Or to update a person:
+UPDATE 7f508a13-3ad7-4756-86ee-c2408d63b145 Bob Male 19830417
+
+You can also pass null if you want to inform no value for some attribute while creating or updating a person.
+UPDATE 7f508a13-3ad7-4756-86ee-c2408d63b145 Bob null 19830417
+
+A person can also be deleted:
+DELETE 7f508a13-3ad7-4756-86ee-c2408d63b145

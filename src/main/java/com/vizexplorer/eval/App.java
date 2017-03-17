@@ -27,15 +27,20 @@
  */
 package com.vizexplorer.eval;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 
@@ -70,7 +75,7 @@ public class App
 
   public String performRequest(String... args) throws ParseException 
   {
-      String operation = args[0];
+      String operation = args.length > 0 ? args[0] : "HELP";
       
       em.getTransaction().begin();
   
@@ -88,6 +93,7 @@ public class App
     operations.put("RETRIEVE", new OperationRetrieve());
     operations.put("UPDATE", new OperationUpdate());
     operations.put("DELETE", new OperationDelete());
+    operations.put("HELP", new OperationHelp());
   }
   
   private static void silentConsole() {
@@ -121,7 +127,7 @@ class OperationRetrieve implements Operation
   {
     String id = args[1];
   
-    Person person = new PersonRepo(em).find(id);
+    Person person = new PersonRepo(em).get(id);
 
     return "Person found: " + Formatter.format(person);
   }
@@ -138,7 +144,7 @@ class OperationUpdate implements Operation
     
     PersonRepo repo = new PersonRepo(em);
     
-    Person person = repo.find(id);
+    Person person = repo.get(id);
 
     person.setName(newAttributes.name);
     person.setGender(newAttributes.gender);
@@ -157,10 +163,29 @@ class OperationDelete implements Operation
   {
     String id = args[1];
     PersonRepo repo = new PersonRepo(em);
-    Person person = repo.find(id);
+    Person person = repo.get(id);
     repo.delete(person);
     
     return "Person deleted: " + Formatter.format(person);
+  }
+}
+
+class OperationHelp implements Operation
+{
+  @Override
+  public String perform(EntityManager em, String... args) throws ParseException {
+    
+    InputStream in = getClass().getResourceAsStream("/help.txt"); 
+    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+
+    StringBuilder help = new StringBuilder();
+    List<Object> lines = reader.lines().collect(Collectors.toList());
+    
+    for(Object line : lines)
+    {
+      help.append(line).append(System.getProperty("line.separator"));
+    }
+    return help.toString();
   }
 }
 
